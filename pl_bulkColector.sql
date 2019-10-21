@@ -37,27 +37,24 @@ update recolectorDos set id = 19 where apellido = 'navarro'
 set serveroutput on
 DECLARE
 	TYPE LISTA_PERSONAS IS TABLE OF recolectorUno%rowtype;
-    personas LISTA_PERSONAS;
-    cursor c1 is select * from recolectorDos;
-    pr1 c1%rowtype;
+    personas LISTA_PERSONAS;   
 BEGIN
 	BEGIN
 		SELECT * BULK COLLECT INTO personas FROM recolectorUno;
 	EXCEPTION WHEN OTHERS THEN personas := NULL;
 	END;
-    open c1;
-    loop
-        fetch c1 into pr1;
-        exit when c1%notfound;
-        --
+
             forall i in personas.first .. personas.last
             update recolectorDos 
                set fecha= personas(i).fecha 
              where id = personas(i).id;
-        --
-    end loop;
-    close c1;
 END;
+/
+update recolectorDos set fecha = null;
+/
+select * from recolectorDos
+/
+select count(*) from recolectorUno
 /
 select * from recolectorUno where id = 388
 /
