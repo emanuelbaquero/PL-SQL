@@ -1,0 +1,64 @@
+create user demo identified by demo
+/
+BEGIN
+    EXECUTE IMMEDIATE 'grant create any directory to demo';
+    EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY TEMP AS ''c:\temp''';
+    EXECUTE IMMEDIATE 'GRANT READ,WRITE ON DIRECTORY TEMP TO demo';
+END;
+/
+commit
+/
+connect demo/demo
+/
+GRANT  
+    CREATE SESSION,
+    CREATE PROCEDURE,
+    CREATE MATERIALIZED VIEW,
+    ALTER SESSION,
+    CREATE VIEW,
+    CREATE ANY DIRECTORY
+TO user_demo
+/
+DROP DIRECTORY EXT_EMPLEADOS
+/
+CREATE DIRECTORY EXT_EMPLEADOS AS 'C:\Users\Home\Oracle\empleados';
+/
+select * from hr.employees where employee_id < 110
+/
+DROP TABLE EMPLOYEES_EXT
+/
+CREATE TABLE EMPLOYEES_EXT
+(
+  "EMPLOYEE_ID" NUMBER(6),
+  "FIRST_NAME" VARCHAR2(20),
+  "LAST_NAME" VARCHAR2(25),
+  "EMAIL" VARCHAR2(25),
+  "PHONE_NUMBER" VARCHAR2(20),
+  "HIRE_DATE" VARCHAR2(10),
+  "JOB_ID" VARCHAR2(10),
+  "SALARY" NUMBER(8,2),
+  "COMMISSION_PCT" NUMBER(2,2),
+  "MANAGER_ID" NUMBER(6),
+  "DEPARTMENT_ID" NUMBER(4)
+)
+ORGANIZATION EXTERNAL
+(   TYPE ORACLE_LOADER
+    DEFAULT DIRECTORY EXT_EMPLEADOS
+    ACCESS PARAMETERS 
+(   
+    RECORDS DELIMITED BY NEWLINE
+    FIELDS TERMINATED BY "#"
+)
+    LOCATION('names.txt')
+)
+    REJECT LIMIT UNLIMITED
+/
+select * from EMPLOYEES_EXT
+/
+select * from hr.employees
+/
+insert into hr.employees
+(employee_id,last_name,email)
+select * from EMPLOYEES_EXT
+
+insert into employees
