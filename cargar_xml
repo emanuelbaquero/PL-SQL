@@ -1,0 +1,101 @@
+DECLARE
+
+CONTADOR NUMBER := 0;
+V_XML XMLTYPE;
+
+FUNCTION obtenerXML RETURN XMLTYPE IS 
+
+    V_XML XMLTYPE;
+    BEGIN
+        V_XML := xmltype('<?xml version="1.0" encoding="UTF-8"?>
+
+            <start_page name="Design ETL Processes">
+                <main_items>
+                    <item link="custom:jdevShowTopic:mappings.htm" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Create Basic Relational Mappings</name>
+                        <description>Extract, transform and load data among relational sources and targets, including databases, flat files, and ERP applications.</description>
+                    </item>
+                    <item link="custom:jdevShowTopic:design_processflows.htm" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Create Process Flows </name>
+                        <description>Design multi-step data integration processes using a wide variety of activities and complex flow of control.</description>
+                    </item>    
+                    <item link="custom:jdevShowTopic:dim_mappings.htm" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Load Dimensions and Cubes </name>
+                        <description>Use OWBapos;s advanced dimensional object support for ETL with dimensions and cubes, including SCD Types 1, 2 and 3.</description>
+                    </item>
+                    <item link="custom:jdevShowTopic:deploy.htm" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Deploy OWB Jobs</name>
+                        <description>Push your objects and ETL logic out to your sources and targets.</description>
+                    </item>    
+                    <item link="custom:jdevShowTopic:sap_km_mappings001.htm-CHDHIIJE" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Use SQL*Loader Mappings for Flat Files</name>
+                        <description>Get maximum load performance on large data volumes.</description>
+                    </item>
+                    <item link="custom:jdevShowTopic:deploy014.htm-BEIDEDIG" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Execute OWB Jobs</name>
+                        <description>Run your ETL, data quality or other OWB jobs from the OWB Control Center Manager.</description>
+                    </item>    
+                    <item link="custom:jdevShowTopic:sap_km_mappings005.htm-BEIDGFEC" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Extract Data from SAP R/3</name>
+                        <description>Use high performance extraction techniques based on ABAP code and fully supported by SAP.</description>
+                    </item>
+                    <item link="custom:jdevShowTopic:f1_execute_topic.htm-sthref1302" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>View OWB Job Results</name>
+                        <description>Find out what happened to your deployments and executions, including scheduled executions.</description>
+                    </item>    
+                    <item link="custom:jdevShowTopic:sap_km_mappings015.htm-BABIFJIA" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Create Code Template Mappings</name>
+                        <description>Use the OWB mapping paradigm with JDBC connectivity, and faster and more flexible data movement techniques and patterns.</description>
+                    </item>
+                    <item link="custom:jdevShowTopic:scheduling_etl.htm" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Schedule OWB Jobs </name>
+                        <description>Use the OWB integrated scheduler to run ETL activities at different times.</description>
+                    </item>    <item link="custom:jdevShowTopic:etl_performance001.htm-BBAGAHCH" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Optimize Mapping Performance</name>
+                        <description>Take full advantage of hints and other features to run your ETL faster.</description>
+                    </item>        
+                    
+                    <item link="custom:jdevShowTopic:design_webservices.htm" status="1"  studio="1">
+                        <icon>welcomeImages/kd_coach.png</icon>
+                        <name>Integrate with SOA Solutions</name>
+                        <description>Expose OWB mappings and process flows as web services, for orchestration from Oracle BPEL or similar tools.</description>
+                    </item>    
+                </main_items>
+            </start_page>');
+        RETURN V_XML;
+    END;
+    
+    
+    
+    
+BEGIN
+    V_XML := obtenerXML();
+    
+    
+    FOR I IN (SELECT     EXTRACTVALUE(VALUE(BB),'//item/name/text()')             AS NOMBRE,
+                        (EXTRACTVALUE(VALUE(BB),'//item/description/text()'))     AS DESCRIPCION
+                FROM     TABLE(XMLSEQUENCE(EXTRACT(V_XML,'//start_page/main_items/item'))) BB)
+
+    
+    LOOP
+         CONTADOR := CONTADOR+1;
+         DBMS_OUTPUT.PUT_LINE('---------------------------'||CONTADOR||'---------------------------');
+         DBMS_OUTPUT.PUT_LINE(I.NOMBRE);
+         DBMS_OUTPUT.PUT_LINE(I.DESCRIPCION);
+         DBMS_OUTPUT.PUT_LINE('------------------------------------------------------');
+         
+    END LOOP;
+
+END;
+/
